@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+
+<div class="text-left">
+    <h4>Главная</h4>
+
+</div>
+<div class="text-md-left">
+
+    <ul class="navbar-nav flex-grow-1">
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Stores" asp-action="Index"> Склады </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Sales" asp-action="Index"> Отгрузки </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Supplies" asp-action="Index"> Поступления </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Items" asp-action="Index"> Изделия </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="TypeOfDocuments" asp-action="Index"> Типы документов </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Buyers" asp-action="Index"> Покупатели </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Vendors" asp-action="Index"> Поставщики </a>
+        </li>
+
+    </ul>
+</div>

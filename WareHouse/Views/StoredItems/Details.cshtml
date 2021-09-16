@@ -1,0 +1,41 @@
+﻿@model WareHouse.DataAccessLayer.Models.StoredItem
+
+@{
+    ViewData["Title"] = "Единицы хранения";
+}
+
+<div>
+    <h4>Подробности @Model.Item.Name на складе</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Item.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Store.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PlacePosition)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PlacePosition)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Править данные</a> |
+    <a asp-action="StoreList" asp-route-id="@Model.StoreId">К листу хранения на складе @Model.Store.Name </a>|
+    <a asp-action="Index">К общему списку хранения</a>
+</div>

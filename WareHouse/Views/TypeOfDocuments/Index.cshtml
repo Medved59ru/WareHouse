@@ -1,0 +1,44 @@
+﻿@model IEnumerable<WareHouse.DataAccessLayer.Models.TypeOfDocument>
+
+@{
+    ViewData["Title"] = "Тип документа";
+}
+
+<h4>Тип документа</h4>
+
+<p>
+    <a asp-action="Create">Добавить новый</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Operation)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Operation)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Править</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Подробности</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
