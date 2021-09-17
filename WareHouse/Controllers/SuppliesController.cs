@@ -146,7 +146,7 @@ namespace WareHouse.Controllers
             if(success)
                return RedirectToAction(nameof(Index));
 
-            return Content("ОШИБКА ОПЕРАЦИИ. Есть всязанные данные => удалить нельзя");
+            return Content("ОШИБКА ОПЕРАЦИИ. ПРОВЕРЬТЕ ПРАВИЛЬНОСТЬ ДЕЙСТВИЙ");
         }
 
        

@@ -37,6 +37,7 @@ namespace WareHouse
             services.AddScoped<EFVendorHandler>();
             services.AddTransient<EFSuppliesHandler>();
             services.AddTransient<EFStoredItemHandler>();
+            services.AddTransient<EFSalesHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

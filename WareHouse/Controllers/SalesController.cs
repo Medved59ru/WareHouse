@@ -7,23 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WareHouse.DataAccessLayer;
 using WareHouse.DataAccessLayer.Models;
+using WareHouse.BAL;
 
 namespace WareHouse.Controllers
 {
     public class SalesController : Controller
     {
-        private readonly ApplicationContext _context;
+        private readonly EFSalesHandler _sale;
 
-        public SalesController(ApplicationContext context)
+        public SalesController(EFSalesHandler sale)
         {
-            _context = context;
+            _sale = sale;
         }
 
         // GET: Sales
         public async Task<IActionResult> Index()
         {
-            var applicationContext = _context.Sales.Include(s => s.Buyer).Include(s => s.Item).Include(s => s.Store).Include(s => s.TypeOfDocument);
-            return View(await applicationContext.ToListAsync());
+            var salesList = _sale.GetSales();
+            return View(await salesList.ToListAsync());
         }
 
         // GET: Sales/Details/5
@@ -34,12 +35,7 @@ namespace WareHouse.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales
-                .Include(s => s.Buyer)
-                .Include(s => s.Item)
-                .Include(s => s.Store)
-                .Include(s => s.TypeOfDocument)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var sale = await _sale.GetSaleBy(id);
             if (sale == null)
             {
                 return NotFound();
@@ -51,10 +47,10 @@ namespace WareHouse.Controllers
         // GET: Sales/Create
         public IActionResult Create()
         {
-            ViewData["BuyerId"] = new SelectList(_context.Buyers, "Id", "Name");
-            ViewData["ItemId"] = new SelectList(_context.Items, "Id", "Name");
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Name");
-            ViewData["TypeOfDocumentId"] = new SelectList(_context.TypeOfDocuments, "Id", "Name");
+            ViewData["BuyerId"] = _sale.GetBuyersForList();
+            ViewData["ItemId"] = _sale.GetItemsForList();
+            ViewData["StoreId"] = _sale.GetStoresForList();
+            ViewData["TypeOfDocumentId"] = _sale.GetTypeOfDocForList();
             return View();
         }
 
@@ -67,14 +63,14 @@ namespace WareHouse.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(sale);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var success = await _sale.SaveSale(sale);
+                if(success)
+                      return RedirectToAction(nameof(Index));
             }
-            ViewData["BuyerId"] = new SelectList(_context.Buyers, "Id", "Name", sale.BuyerId);
-            ViewData["ItemId"] = new SelectList(_context.Items, "Id", "Name", sale.ItemId);
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Name", sale.StoreId);
-            ViewData["TypeOfDocumentId"] = new SelectList(_context.TypeOfDocuments, "Id", "Name", sale.TypeOfDocumentId);
+            ViewData["BuyerId"] =  _sale.GetBuyersForList("Id", "Name", sale.BuyerId);
+            ViewData["ItemId"] =  _sale.GetItemsForList("Id", "Name", sale.ItemId);
+            ViewData["StoreId"] = _sale.GetStoresForList("Id", "Name", sale.StoreId);
+            ViewData["TypeOfDocumentId"] = _sale.GetTypeOfDocForList("Id", "Name", sale.TypeOfDocumentId);
             return View(sale);
         }
 
@@ -86,15 +82,15 @@ namespace WareHouse.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales.FindAsync(id);
+            var sale = await _sale.FindSaleBy(id);
             if (sale == null)
             {
                 return NotFound();
             }
-            ViewData["BuyerId"] = new SelectList(_context.Buyers, "Id", "Name", sale.BuyerId);
-            ViewData["ItemId"] = new SelectList(_context.Items, "Id", "Name", sale.ItemId);
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Name", sale.StoreId);
-            ViewData["TypeOfDocumentId"] = new SelectList(_context.TypeOfDocuments, "Id", "Name", sale.TypeOfDocumentId);
+            ViewData["BuyerId"] = _sale.GetBuyersForList("Id", "Name", sale.BuyerId);
+            ViewData["ItemId"] = _sale.GetItemsForList("Id", "Name", sale.ItemId);
+            ViewData["StoreId"] = _sale.GetStoresForList("Id", "Name", sale.StoreId);
+            ViewData["TypeOfDocumentId"] = _sale.GetTypeOfDocForList("Id", "Name", sale.TypeOfDocumentId);
             return View(sale);
         }
 
@@ -112,28 +108,14 @@ namespace WareHouse.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(sale);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SaleExists(sale.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                var success =await _sale.Update(sale);
+                if(success)
+                        return RedirectToAction(nameof(Index));
             }
-            ViewData["BuyerId"] = new SelectList(_context.Buyers, "Id", "Name", sale.BuyerId);
-            ViewData["ItemId"] = new SelectList(_context.Items, "Id", "Name", sale.ItemId);
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Name", sale.StoreId);
-            ViewData["TypeOfDocumentId"] = new SelectList(_context.TypeOfDocuments, "Id", "Name", sale.TypeOfDocumentId);
+            ViewData["BuyerId"] = _sale.GetBuyersForList("Id", "Name", sale.BuyerId);
+            ViewData["ItemId"] = _sale.GetItemsForList("Id", "Name", sale.ItemId);
+            ViewData["StoreId"] = _sale.GetStoresForList("Id", "Name", sale.StoreId);
+            ViewData["TypeOfDocumentId"] = _sale.GetTypeOfDocForList("Id", "Name", sale.TypeOfDocumentId);
             return View(sale);
         }
 
@@ -145,12 +127,7 @@ namespace WareHouse.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales
-                .Include(s => s.Buyer)
-                .Include(s => s.Item)
-                .Include(s => s.Store)
-                .Include(s => s.TypeOfDocument)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var sale = await _sale.GetSaleBy(id);
             if (sale == null)
             {
                 return NotFound();
@@ -164,15 +141,14 @@ namespace WareHouse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sale = await _context.Sales.FindAsync(id);
-            _context.Sales.Remove(sale);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var sale = await _sale.FindSaleBy(id);
+            var success = await _sale.Delete(sale);
+            if(success)
+               return RedirectToAction(nameof(Index));
+
+            return Content("ОШИБКА ОПЕРАЦИИ. ПРОВЕРЬТЕ ПРАВИЛЬНОСТЬ ДЕЙСТВИЙ");
         }
 
-        private bool SaleExists(int id)
-        {
-            return _context.Sales.Any(e => e.Id == id);
-        }
+       
     }
 }
