@@ -17,7 +17,7 @@ namespace WareHouse.BAL
             _context = context;
         }
 
-        public  IQueryable<Sale> GetSales()=>  _context.Sales.Include(s => s.Buyer)
+        public IQueryable<Sale> GetSales() => _context.Sales.Include(s => s.Buyer)
                                                        .Include(s => s.Item)
                                                        .Include(s => s.Store)
                                                        .Include(s => s.TypeOfDocument);
@@ -36,7 +36,7 @@ namespace WareHouse.BAL
                                                                => new SelectList(_context.Items, id, name, foriengId);
 
         public SelectList GetStoresForList(string id = "Id", string name = "Name", int? foriengId = null)
-                                                               =>  new SelectList(_context.Stores, id, name, foriengId);
+                                                               => new SelectList(_context.Stores, id, name, foriengId);
 
         public SelectList GetTypeOfDocForList(string id = "Id", string name = "Name", int? foriengId = null)
                                                              => new SelectList(_context.TypeOfDocuments, id, name, foriengId);
@@ -46,10 +46,10 @@ namespace WareHouse.BAL
             bool success;
             try
             {
+                CheckStoredItem(sale.ItemId, sale.StoreId, sale.Amount);
                 _context.Add(sale);
                 await _context.SaveChangesAsync();
                 success = true;
-
             }
             catch
             {
@@ -96,6 +96,28 @@ namespace WareHouse.BAL
                 success = false;
             }
             return success;
+        }
+
+        private void CheckStoredItem(int? itemId, int? storeId, int amount)
+        {
+            var item = _context.StoredItems.Include(g => g.Store).Where(p => p.StoreId == storeId)
+                                           .Include(g => g.Item).Where(p => p.ItemId == itemId).FirstOrDefault();
+            if (item is StoredItem)
+            {
+                if (item.Amount >= amount)
+                {
+                    item.Amount -= amount;
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("Запрашиваемое количество превышает хранимое.");
+                }
+            }
+            else
+            {
+                throw new Exception("Нет указанного изделия на указанном складе");
+            }
         }
 
         private bool SaleExists(int id)

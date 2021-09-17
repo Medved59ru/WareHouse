@@ -124,7 +124,6 @@ namespace WareHouse.BAL
             }
             _context.SaveChanges();
 
-
         }
        
     }
